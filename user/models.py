@@ -52,27 +52,11 @@ class BankAccount(models.Model):
     accountNumber = models.TextField(max_length=20)
     bank = models.ForeignKey(to=Bank, on_delete=CASCADE)
 
-class Degree(models.Model):
-    title = models.CharField()
-    organization = models.CharField()
-    year = models.IntegerField()
-
-class Experience(models.Model):
-    from_ = models.DateField()
-    to = models.DateField(null=True)
-    description = models.CharField()
-
-class Certificate(models.Model):
-    from_ = models.DateField()
-    to = models.DateField(null=True)
-    title = models.CharField()
-    description = models.CharField()
-
 class CustomUser(AbstractUser):
     email = models.EmailField("Email address", unique=True)
     username = None
     dob = models.DateField(null=False, blank=False, default=date(year=2000, month=12, day=3))
-    name = models.CharField(
+    name = models.TextField(
         max_length=50,
         default="User"
     )
@@ -80,6 +64,7 @@ class CustomUser(AbstractUser):
     cover = models.URLField(max_length=200, null=True, blank=True)
     bankAccount = models.ForeignKey(to=BankAccount, on_delete=CASCADE, null=True, blank=True)
     loyaltyPoint = models.IntegerField(default=0)
+    phoneNumber = models.TextField(null=True)
 
     class GenderChoice(models.TextChoices):
         MALE = "Male", "Male"
@@ -100,4 +85,24 @@ class CustomUser(AbstractUser):
     objects = CustomUserManager()
 
     def __str__(self) -> str:
-        return self.name + " " + self.role
+        return self.name
+
+
+class Degree(models.Model):
+    title = models.TextField()
+    organization = models.TextField()
+    year = models.IntegerField()
+    user = models.ForeignKey(to=CustomUser, on_delete=CASCADE)
+
+class Experience(models.Model):
+    _from = models.DateField()
+    to = models.DateField(null=True)
+    description = models.TextField()
+    user = models.ForeignKey(to=CustomUser, on_delete=CASCADE)
+
+class Certificate(models.Model):
+    _from = models.DateField()
+    to = models.DateField(null=True)
+    title = models.TextField()
+    description = models.TextField()
+    user = models.ForeignKey(to=CustomUser, on_delete=CASCADE)

@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -75,8 +76,34 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'do_an.wsgi.application'
-
-
+SIMPLE_JWT = {
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=300),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=300),
+    "ROTATE_REFRESH_TOKENS": True
+}
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+    'DEFAULT_THROTTLE_CLASSES': (
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle',
+        'rest_framework.throttling.ScopedRateThrottle',
+    ),
+    # 'DEFAULT_THROTTLE_RATES': {
+    #     'anon': '5/minute',
+    #     'user': '500/day',
+    # },
+    # 'EXCEPTION_HANDLER': 'fake_slink.exception_handler.custom_exception_handler',
+    # 'DEFAULT_RENDERER_CLASSES': (
+    #     'fake_slink.custom_response.CustomJSONRenderer',
+    #     'rest_framework.renderers.JSONRenderer',
+    #     'rest_framework.renderers.BrowsableAPIRenderer'
+    # ),
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination'
+}
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
