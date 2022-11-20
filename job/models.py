@@ -8,11 +8,11 @@ class Address(Model):
     district = TextField()
     ward = TextField()
     detail = TextField()
-    latitude = FloatField()
-    longitude = FloatField()
+    latitude = FloatField(null=True, blank=True)
+    longitude = FloatField(null=True, blank=True)
 
 class PaymentMethod(Model):
-    amount = IntegerField()
+    title = TextField()
     description = TextField()
 
 class Category(Model):
