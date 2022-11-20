@@ -4,6 +4,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import permissions
 from django.core.files.storage import default_storage
+import uuid
 # Create your views here.
 
 firebaseConfig = {
@@ -23,9 +24,10 @@ storage = firebase.storage()
 @permission_classes([permissions.IsAuthenticated])
 def upload_file(request):
     file = request.FILES['file']
-    file_save = default_storage.save(file.name, file)
-    storage.child("files/" + file.name).put("media/" + file.name)
-    delete = default_storage.delete(file.name)
+    file_name = str(uuid.uuid1()) + file.name
+    file_save = default_storage.save(file_name, file)
+    storage.child("files/" + file_name).put("media/" + file_name)
+    delete = default_storage.delete(file_name)
     return Response(
-        data = storage.child("files/" + file.name).get_url("media/" + file.name)
+        data = storage.child("files/" + file_name).get_url("media/" + file_name)
     )
