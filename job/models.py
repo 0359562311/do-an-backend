@@ -11,17 +11,20 @@ class Address(Model):
     latitude = FloatField(null=True, blank=True)
     longitude = FloatField(null=True, blank=True)
 
-class PaymentMethod(Model):
-    title = TextField()
-    description = TextField()
-
 class Category(Model):
     name = TextField(unique=True)
+
+class PaymentMethod(Model):
+    title = TextField(default="")
+    description = TextField()
+
+class JobPayment(Model):
+    paymentMethod = ForeignKey(to=PaymentMethod, on_delete=CASCADE)
 
 class Job(Model):
     poster = ForeignKey(to=CustomUser, on_delete=CASCADE)
     address = OneToOneField(to=Address, on_delete=CASCADE, null=True)
-    paymentMethod = ForeignKey(to=PaymentMethod, on_delete=CASCADE)
+    payment = ForeignKey(to=JobPayment, on_delete=CASCADE, null=True)
     title = TextField()
     description = TextField()
     categories = ManyToManyField(to=Category)
