@@ -19,6 +19,7 @@ class PaymentMethod(Model):
     description = TextField()
 
 class JobPayment(Model):
+    amount = IntegerField(default=50000)
     paymentMethod = ForeignKey(to=PaymentMethod, on_delete=CASCADE)
 
 class Job(Model):
