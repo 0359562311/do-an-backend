@@ -38,7 +38,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
             'id', 'name', 'dob', 'avatar', 'cover', 
             'gender', 'phoneNumber', 'createAt', 'updateAt', 'email', 'loyaltyPoint', 'bankAccount', 'degrees', 'experiences', 'certificates'
         )
-        read_only_fields = ('id', 'name', 'dob', 'gender', 'role', 'createAt', 'updateAt', 'email', 'loyaltyPoint', 'bankAccount')
+        read_only_fields = ('id', 'dob', 'gender', 'role', 'createAt', 'updateAt', 'email', 'loyaltyPoint', 'bankAccount')
 
     def get_degrees(self, obj):
         return DegreeSerializer(Degree.objects.filter(user=obj), many=True).data

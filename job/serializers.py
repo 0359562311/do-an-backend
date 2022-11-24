@@ -89,3 +89,25 @@ class CreateJobSerializer(serializers.Serializer):
         for video in videos:
             JobVideo.objects.create(video=video, job=job).save()
         return job
+
+class OfferSerializer(serializers.ModelSerializer):
+    # user = CustomUserSerializer()
+    class Meta:
+        model = Offer
+        fields = '__all__'
+
+class OfferDetailSerializer(serializers.ModelSerializer):
+    user = CustomUserSerializer()
+    class Meta:
+        model = Offer
+        fields = '__all__'
+
+class ReviewSerializer(serializers.ModelSerializer):
+    job = serializers.SerializerMethodField()
+    class Meta:
+        model = Review
+        fields = ['rating', 'detail']
+
+    def get_job(self, obj):
+        offer = Offer.objects.get(id=obj.offer.id)
+        return JobSerializer(offer.job).data

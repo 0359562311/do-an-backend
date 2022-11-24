@@ -46,8 +46,16 @@ class JobVideo(Model):
     job = ForeignKey(to=Job, on_delete=CASCADE)
 
 class Offer(Model):
+    class OfferStatus(TextChoices):
+        PENDING = "Pending", "Pending"
+        APPROVED = "Approved", "Approved"
+        CLOSED = "Closed", "Closed"
+
+    status = TextField(choices=OfferStatus.choices, default=OfferStatus.PENDING)
+
     price = IntegerField()
     description = TextField()
+    job = ForeignKey(to=Job, on_delete=CASCADE, blank=True, null=True)
     user = ForeignKey(to=CustomUser, on_delete=CASCADE)
 
 class Review(Model):
