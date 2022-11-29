@@ -14,6 +14,9 @@ class Address(Model):
 class Category(Model):
     name = TextField(unique=True)
 
+    def __str__(self) -> str:
+        return self.name
+
 class PaymentMethod(Model):
     title = TextField(default="")
     description = TextField()

@@ -22,6 +22,16 @@ class JobViewSet(viewsets.ModelViewSet):
         serializer.save(poster=request.user)
         return Response()
 
+    def get_queryset(self):
+        jobs = Job.objects.filter(status=Job.JobStatus.OPENING)
+        keyword = self.request.GET['keyword']
+        categories = self.request.GET['categories']
+        if keyword:
+            job = jobs.filter(title__contains=keyword)
+        if categories:
+            job = jobs.filter(categories__in=categories)
+        return job
+
     @action(methods=['GET', 'POST', 'PATCH'], detail=True)
     def my_offer(self, request, pk = None,*args, **kwargs):
         job = Job.objects.get(id=pk)
@@ -62,3 +72,8 @@ class JobViewSet(viewsets.ModelViewSet):
             JobSerializer(jobs, many=True).data
         )
 
+    @action(detail=False, methods=['GET'])
+    def categories(self, request, pk = None, *args, **kwargs):
+        return Response(
+            data=CategorySerializer(Category.objects.all(), many=True).data
+        )
