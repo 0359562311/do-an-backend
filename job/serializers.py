@@ -1,6 +1,8 @@
+import datetime
 from rest_framework import serializers
 from .models import *
 from user.serializers import CustomUserSerializer
+from datetime import date
 
 class AddressSerializer(serializers.ModelSerializer):
     class Meta:
@@ -75,6 +77,7 @@ class CreateJobSerializer(serializers.Serializer):
     videos = serializers.ListField(
         child=serializers.CharField()
     )
+    dueDate = serializers.IntegerField()
 
     def save(self, poster,**kwargs):
         address = Address.objects.create(**self.initial_data.pop('address'))
@@ -85,7 +88,9 @@ class CreateJobSerializer(serializers.Serializer):
         categories = Category.objects.filter(id__in=categories)
         images = self.initial_data.pop('images')
         videos = self.initial_data.pop('videos')
-        job = Job.objects.create(poster=poster, address=address, payment=payment,**self.initial_data)
+        dueDateTimeStamp = self.initial_data.pop('dueDate')
+        dueDate = date.fromtimestamp(dueDateTimeStamp)
+        job = Job.objects.create(poster=poster, address=address, payment=payment, dueDate=dueDate,**self.initial_data)
         for c in categories:
             job.categories.add(c)
         job.save()

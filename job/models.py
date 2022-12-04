@@ -32,6 +32,7 @@ class Job(Model):
     title = TextField()
     description = TextField()
     categories = ManyToManyField(to=Category)
+    dueDate = DateField(null=True,)
     
     class JobStatus(TextChoices):
         PENDING = "Pending", "Pending"
