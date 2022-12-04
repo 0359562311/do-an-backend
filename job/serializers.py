@@ -23,6 +23,11 @@ class JobPaymentSerializer(serializers.ModelSerializer):
         model = JobPayment
         fields = '__all__'
 
+class CreateJobPaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = JobPayment
+        fields = '__all__'
+
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
@@ -55,7 +60,7 @@ class JobSerializer(serializers.ModelSerializer):
 
 class CreateJobSerializer(serializers.Serializer):
     address = serializers.DictField()
-    payment = JobPaymentSerializer()
+    payment = CreateJobPaymentSerializer()
     title = serializers.CharField(max_length=500)
     description = serializers.CharField(max_length=5000)
     categories = serializers.ListField(
@@ -73,7 +78,7 @@ class CreateJobSerializer(serializers.Serializer):
 
     def save(self, poster,**kwargs):
         address = Address.objects.create(**self.initial_data.pop('address'))
-        payment = JobPaymentSerializer(data=self.initial_data.pop('payment'))
+        payment = CreateJobPaymentSerializer(data=self.initial_data.pop('payment'))
         if payment.is_valid():
             payment = payment.save()
         categories = self.initial_data.pop('categories')

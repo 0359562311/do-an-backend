@@ -24,13 +24,13 @@ class JobViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         jobs = Job.objects.filter(status=Job.JobStatus.OPENING)
-        keyword = self.request.GET['keyword']
-        categories = self.request.GET['categories']
+        keyword = self.request.GET.get('keyword', None)
+        categories = self.request.GET.get('categories', None)
         if keyword:
-            job = jobs.filter(title__contains=keyword)
+            jobs = jobs.filter(title__contains=keyword)
         if categories:
-            job = jobs.filter(categories__in=categories)
-        return job
+            jobs = jobs.filter(categories__in=[categories])
+        return jobs
 
     @action(methods=['GET', 'POST', 'PATCH'], detail=True)
     def my_offer(self, request, pk = None,*args, **kwargs):
@@ -76,4 +76,10 @@ class JobViewSet(viewsets.ModelViewSet):
     def categories(self, request, pk = None, *args, **kwargs):
         return Response(
             data=CategorySerializer(Category.objects.all(), many=True).data
+        )
+
+    @action(detail=False, methods=['GET'])
+    def payment_methods(self, request, pk = None, *args, **kwargs):
+        return Response(
+            data=PaymentMethodSerializer(PaymentMethod.objects.all(), many=True).data
         )

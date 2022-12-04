@@ -3,6 +3,8 @@ from rest_framework import permissions
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from .models import *
+from job.models import Review
+from job.serializers import ReviewSerializer
 from user.serializers import CustomUserSerializer
 
 # Create your views here.
@@ -18,3 +20,18 @@ def user_me(request):
             serializer.save()
             return Response(data=serializer.data)
         return Response(status=400)
+
+@api_view(["GET"])
+@permission_classes([permissions.IsAuthenticated])
+def profile(request, id, *args, **kwargs):
+    if request.method == "GET":
+        serializer = CustomUserSerializer(CustomUser.objects.get(id=id))
+        return Response(serializer.data)
+
+@api_view(["GET"])
+@permission_classes([permissions.IsAuthenticated])
+def ratings(request, id, *args, **kwargs):
+    if request.method == "GET":
+        user = CustomUser.objects.get(id=id)
+        reviews = Review.objects.filter(offer__user=user)
+        return Response(ReviewSerializer(reviews, many=True).data)

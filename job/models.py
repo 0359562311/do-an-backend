@@ -27,7 +27,7 @@ class JobPayment(Model):
 
 class Job(Model):
     poster = ForeignKey(to=CustomUser, on_delete=CASCADE)
-    address = OneToOneField(to=Address, on_delete=CASCADE, null=True)
+    address = OneToOneField(to=Address, on_delete=CASCADE, null=True, blank = True)
     payment = ForeignKey(to=JobPayment, on_delete=CASCADE, null=True)
     title = TextField()
     description = TextField()
