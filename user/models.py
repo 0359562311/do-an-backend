@@ -65,6 +65,7 @@ class CustomUser(AbstractUser):
     bankAccount = models.ForeignKey(to=BankAccount, on_delete=CASCADE, null=True, blank=True)
     loyaltyPoint = models.IntegerField(default=0)
     phoneNumber = models.TextField(null=True)
+    bio = models.TextField(null=True, blank=True)
 
     class GenderChoice(models.TextChoices):
         MALE = "Male", "Male"

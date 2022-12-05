@@ -36,7 +36,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = (
             'id', 'name', 'dob', 'avatar', 'cover', 
-            'gender', 'phoneNumber', 'createAt', 'updateAt', 'email', 'loyaltyPoint', 'bankAccount', 'degrees', 'experiences', 'certificates'
+            'gender', 'phoneNumber', 'createAt', 'updateAt', 'email', 'loyaltyPoint', 'bankAccount', 'degrees', 'experiences', 'certificates', 'bio'
         )
         read_only_fields = ('id', 'dob', 'gender', 'role', 'createAt', 'updateAt', 'email', 'loyaltyPoint', 'bankAccount')
 

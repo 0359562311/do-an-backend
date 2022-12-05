@@ -45,10 +45,6 @@ class JobImage(Model):
     image = TextField()
     job = ForeignKey(to=Job, on_delete=CASCADE)
 
-class JobVideo(Model):
-    video = TextField()
-    job = ForeignKey(to=Job, on_delete=CASCADE)
-
 class Offer(Model):
     class OfferStatus(TextChoices):
         PENDING = "Pending", "Pending"

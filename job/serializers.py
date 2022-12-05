@@ -80,8 +80,10 @@ class CreateJobSerializer(serializers.Serializer):
     dueDate = serializers.IntegerField()
 
     def save(self, poster,**kwargs):
-        address = Address.objects.create(**self.initial_data.pop('address'))
-        payment = CreateJobPaymentSerializer(data=self.initial_data.pop('payment'))
+        address = None
+        if self.initial_data.get('address'):
+            address = Address.objects.create(**self.initial_data.pop('address'))
+        payment = CreateJobPaymentSerializer(data=self.initial_data.pop('payment', None))
         if payment.is_valid():
             payment = payment.save()
         categories = self.initial_data.pop('categories')
