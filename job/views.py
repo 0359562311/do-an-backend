@@ -83,3 +83,17 @@ class JobViewSet(viewsets.ModelViewSet):
         return Response(
             data=PaymentMethodSerializer(PaymentMethod.objects.all(), many=True).data
         )
+
+    @action(detail=False,methods=['GET'])
+    def my_jobs(self, request):
+        jobs = Job.objects.filter(poster=request.user)
+        return Response(
+            JobSerializer(jobs, many=True).data
+        )
+
+class MyJobViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = JobSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Job.objects.filter(poster=self.request.user)

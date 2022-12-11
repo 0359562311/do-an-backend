@@ -41,7 +41,6 @@ class JobSerializer(serializers.ModelSerializer):
     poster = CustomUserSerializer()
     categories = CategorySerializer(many=True)
     images = serializers.SerializerMethodField()
-    videos = serializers.SerializerMethodField()
     class Meta:
         model = Job
         fields = '__all__'
@@ -51,13 +50,6 @@ class JobSerializer(serializers.ModelSerializer):
         data = []
         for i in images:
             data.append(i.image)
-        return data
-
-    def get_videos(self, obj):
-        videos = JobVideo.objects.filter(job=obj)
-        data = []
-        for i in videos:
-            data.append(i.video)
         return data
 
 class CreateJobSerializer(serializers.Serializer):
@@ -98,8 +90,6 @@ class CreateJobSerializer(serializers.Serializer):
         job.save()
         for image in images:
             JobImage.objects.create(image=image,job=job).save()
-        for video in videos:
-            JobVideo.objects.create(video=video, job=job).save()
         return job
 
 class OfferSerializer(serializers.ModelSerializer):
