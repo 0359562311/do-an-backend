@@ -66,6 +66,7 @@ class CustomUser(AbstractUser):
     loyaltyPoint = models.IntegerField(default=0)
     phoneNumber = models.TextField(null=True)
     bio = models.TextField(null=True, blank=True)
+    balance = models.IntegerField(default=0)
 
     class GenderChoice(models.TextChoices):
         MALE = "Male", "Male"
