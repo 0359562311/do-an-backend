@@ -47,6 +47,9 @@ class Bank(models.Model):
     bankId = models.TextField(max_length=10)
     name = models.TextField(max_length=50)
 
+    def __str__(self) -> str:
+        return str(self.name)
+
 class BankAccount(models.Model):
     owner = models.TextField(max_length=50)
     accountNumber = models.TextField(max_length=20)

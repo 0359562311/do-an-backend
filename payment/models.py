@@ -16,9 +16,6 @@ class JobPromotionTransaction(models.Model):
     dueDate = models.DateTimeField()
     job = models.ForeignKey(to=Job, on_delete=models.CASCADE)
 
-class ProfileViewTransaction(models.Model):
-    other = models.ForeignKey(to=CustomUser, on_delete=models.CASCADE)
-
 class ProfilePromotionTransaction(models.Model):
     dueDate = models.DateTimeField()
 
@@ -37,7 +34,6 @@ class Transaction(models.Model):
     deposit = models.ForeignKey(to=DepositTransaction, on_delete=models.CASCADE, null=True, blank=True)
     withdraw = models.ForeignKey(to=WithdrawTransaction, on_delete=models.CASCADE, null=True, blank=True)
     jobPromotion = models.ForeignKey(to=JobPromotionTransaction, on_delete=models.CASCADE, null=True, blank=True)
-    profileView = models.ForeignKey(to=ProfileViewTransaction, on_delete=models.CASCADE, null=True, blank=True)
     profilePromotion = models.ForeignKey(to=ProfilePromotionTransaction, on_delete=models.CASCADE, null=True, blank=True)
     viewJobSeekers = models.ForeignKey(to=ViewJobSeekersTransaction, on_delete=models.CASCADE, null=True, blank=True)
     jobPayment = models.ForeignKey(to=JobPaymentTransaction, on_delete=models.CASCADE, null=True, blank=True)

@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import *
+from user.serializers import BankAccountSerializer
 
 class DepositTransactionSerializer(serializers.ModelSerializer):
 
@@ -8,6 +9,7 @@ class DepositTransactionSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class WithdrawTransactionSerializer(serializers.ModelSerializer):
+    userBankAccount = BankAccountSerializer()
     class Meta:
         model = WithdrawTransaction
         fields = '__all__'
@@ -15,11 +17,6 @@ class WithdrawTransactionSerializer(serializers.ModelSerializer):
 class JobPromotionTransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = JobPromotionTransaction
-        fields = '__all__'
-
-class ProfileViewTransactionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProfileViewTransaction
         fields = '__all__'
 
 class ProfilePromotionTransactionSerializer(serializers.ModelSerializer):

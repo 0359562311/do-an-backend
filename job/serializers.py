@@ -81,7 +81,6 @@ class CreateJobSerializer(serializers.Serializer):
         categories = self.initial_data.pop('categories')
         categories = Category.objects.filter(id__in=categories)
         images = self.initial_data.pop('images')
-        videos = self.initial_data.pop('videos')
         dueDateTimeStamp = self.initial_data.pop('dueDate')
         dueDate = date.fromtimestamp(dueDateTimeStamp)
         job = Job.objects.create(poster=poster, address=address, payment=payment, dueDate=dueDate,**self.initial_data)
