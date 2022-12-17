@@ -23,6 +23,17 @@ class JobViewSet(viewsets.ModelViewSet):
         serializer.save(poster=request.user)
         return Response()
 
+    def partial_update(self, request, pk ,*args, **kwargs):
+        job = Job.objects.get(id=pk)
+        status = request.data.get('status', None)
+        job.status = status
+        job.save()
+        if status == Job.JobStatus.CLOSED:
+            for offer in Offer.objects.filter(job=job):
+                offer.status = Offer.OfferStatus.CLOSED
+                offer.save()
+        return Response()
+
     def get_queryset(self):
         currentDate = datetime.datetime.now()
         jobs = Job.objects.exclude(dueDate__isnull=True).filter(status=Job.JobStatus.OPENING, dueDate__gte=currentDate)
@@ -51,7 +62,7 @@ class JobViewSet(viewsets.ModelViewSet):
             serializer.save()
             return Response()
         else:
-            offer = Offer.objects.filter(job=job,user=request.user)
+            offer = Offer.objects.filter(job=job,user=request.user, status=Offer.OfferStatus.PENDING)
             if len(offer) > 0:
                 serializer = OfferSerializer(offer[0])
                 serializer.update(offer[0],validated_data=request.data)
@@ -92,6 +103,14 @@ class JobViewSet(viewsets.ModelViewSet):
         return Response(
             JobSerializer(jobs, many=True).data
         )
+
+    @action(detail=True, methods=['PUT'])
+    def accept_offer(self, request, pk, *arg, **kwarg):
+        data = request.data
+        offer = Offer.objects.get(data['offerId'])
+        offer.status = Offer.OfferStatus.APPROVED
+        offer.save()
+        return Response()
 
 class MyJobViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = JobSerializer
