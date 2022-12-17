@@ -1,6 +1,7 @@
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import permissions
+from django.db.models import Q
 from .serializers import *
 from rest_framework import viewsets
 from rest_framework.decorators import action
@@ -36,7 +37,7 @@ class JobViewSet(viewsets.ModelViewSet):
     def my_offer(self, request, pk = None,*args, **kwargs):
         job = Job.objects.get(id=pk)
         if request.method == 'GET':
-            offer = Offer.objects.filter(job=job,user=request.user)
+            offer = Offer.objects.filter(job=job,user=request.user,).filter(~Q(status="Closed"))
             return Response(
                 data= OfferSerializer(offer[0]).data if len(offer) > 0 else None
             )

@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'user',
     'job',
     'storage',
-    'payment'
+    'payment',
+    'notification'
 ]
 
 AUTH_USER_MODEL = 'user.CustomUser'

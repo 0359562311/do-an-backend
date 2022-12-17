@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from rest_framework import viewsets, permissions
+from django.db.models import Q
 from .serializers import *
 from rest_framework.decorators import action, permission_classes, api_view
 from rest_framework.response import Response
@@ -11,7 +12,7 @@ class TransactionViewSet(viewsets.ModelViewSet):
     serializer_class = TransactionSerializer
 
     def get_queryset(self):
-        return Transaction.objects.filter(user=self.request.user)
+        return Transaction.objects.filter(Q(user=self.request.user) | Q(jobPayment__offer__user=self.request.user)).order_by('-createAt')
 
     @action(methods=['POST'], detail=False)
     def deposit(self, request):
@@ -83,6 +84,7 @@ def update_transaction(request):
             else:
                 user = CustomUser.objects.get(id=transaction.user.id)
                 user.balance += transaction.amount
+                user.save()
                 transaction.status = Transaction.TransactionStatus.FAILED
             transaction.save()
         return Response(
