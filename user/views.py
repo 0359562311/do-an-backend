@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from .models import *
 from job.models import Review
 from job.serializers import ReviewSerializer
-from user.serializers import CustomUserSerializer
+from user.serializers import BankAccountSerializer, CreateBankAccountSerializer, CustomUserSerializer
 
 # Create your views here.
 @api_view(["GET", "PATCH", "PUT"])
@@ -35,3 +35,14 @@ def ratings(request, id, *args, **kwargs):
         user = CustomUser.objects.get(id=id)
         reviews = Review.objects.filter(offer__user=user)
         return Response(ReviewSerializer(reviews, many=True).data)
+
+@api_view(['PUT'])
+@permission_classes([permissions.IsAuthenticated])
+def update_bank_account(request, *args):
+    serializer = CreateBankAccountSerializer(data=request.data)
+    if serializer.is_valid():
+        bankAccount = serializer.save()
+        request.user.bankAccount = bankAccount
+        request.user.save()
+        return Response()
+    return Response(status=400)

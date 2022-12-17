@@ -24,7 +24,8 @@ class JobViewSet(viewsets.ModelViewSet):
         return Response()
 
     def get_queryset(self):
-        jobs = Job.objects.filter(status=Job.JobStatus.OPENING)
+        currentDate = datetime.datetime.now()
+        jobs = Job.objects.exclude(dueDate__isnull=True).filter(status=Job.JobStatus.OPENING, dueDate__gte=currentDate)
         keyword = self.request.GET.get('keyword', None)
         categories = self.request.GET.get('categories', None)
         if keyword:

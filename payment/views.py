@@ -1,6 +1,9 @@
 from django.shortcuts import render
 from rest_framework import viewsets, permissions
 from django.db.models import Q
+from user.models import Bank
+
+from user.serializers import BankSerializer
 from .serializers import *
 from rest_framework.decorators import action, permission_classes, api_view
 from rest_framework.response import Response
@@ -13,6 +16,12 @@ class TransactionViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Transaction.objects.filter(Q(user=self.request.user) | Q(jobPayment__offer__user=self.request.user)).order_by('-createAt')
+
+    @action(methods=['GET'], detail=False)
+    def banks(self, request):
+        return Response(
+            BankSerializer(Bank.objects.all(), many=True).data
+        )
 
     @action(methods=['POST'], detail=False)
     def deposit(self, request):
