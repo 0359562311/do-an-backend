@@ -59,7 +59,7 @@ class JobViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['GET'])
     def offers(self, request, pk = None, *args, **kwargs):
         job = Job.objects.get(id=pk)
-        offers = Offer.objects.filter(job=job)
+        offers = Offer.objects.filter(job=job).filter(~Q(status="Closed"))
         serializer = OfferDetailSerializer(offers, many=True)
         return Response(serializer.data)
 
