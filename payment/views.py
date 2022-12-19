@@ -74,6 +74,8 @@ class TransactionViewSet(viewsets.ModelViewSet):
         amount = 0
         if job.payment.paymentMethod == PaymentMethod.objects.get(id=1):
             amount = offer.price
+            job.status = Job.JobStatus.CLOSED
+            job.save()
         else:
             amount = offer.price * data['hours']
         offer.status = Offer.OfferStatus.CLOSED
