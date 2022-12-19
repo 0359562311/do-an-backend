@@ -91,6 +91,10 @@ class CreateJobSerializer(serializers.Serializer):
             JobImage.objects.create(image=image,job=job).save()
         return job
 
+class CreateOfferSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Offer
+        fields = '__all__'
 class OfferSerializer(serializers.ModelSerializer):
     user = CustomUserSerializer()
     job = JobSerializer()

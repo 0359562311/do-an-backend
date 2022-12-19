@@ -63,7 +63,7 @@ class JobViewSet(viewsets.ModelViewSet):
             data = request.data
             data['user'] = request.user.id
             data['job'] = job.id
-            serializer = OfferSerializer(data=data)
+            serializer = CreateOfferSerializer(data=data)
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response()
