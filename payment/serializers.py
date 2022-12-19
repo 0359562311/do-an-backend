@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import *
 from user.serializers import BankAccountSerializer
+from job.serializers import OfferSerializer
 
 class DepositTransactionSerializer(serializers.ModelSerializer):
 
@@ -30,13 +31,15 @@ class ViewJobSeekersTransactionSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class JobPaymentTransactionSerializer(serializers.ModelSerializer):
+    offer = OfferSerializer()
     class Meta:
-        model = ViewJobSeekersTransaction
+        model = JobPaymentTransaction
         fields = '__all__'
 
 class TransactionSerializer(serializers.ModelSerializer):
     deposit = DepositTransactionSerializer()
     withdraw = WithdrawTransactionSerializer()
+    jobPayment = JobPaymentTransactionSerializer()
     class Meta:
         model = Transaction
         fields = '__all__'

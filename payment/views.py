@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets, permissions
 from django.db.models import Q
+from job.models import PaymentMethod
 from user.models import Bank
 
 from user.serializers import BankSerializer
@@ -64,6 +65,28 @@ class TransactionViewSet(viewsets.ModelViewSet):
             user.save()
             return Response(TransactionSerializer(transaction).data)
         return Response(status=400)
+
+    @action(methods=['POST'], detail=True)
+    def jobPayment(self, request, pk):
+        data = request.data
+        job = Job.objects.get(id=pk)
+        offer = Offer.objects.filter(job=job, id=data['offerId']).first()
+        amount = 0
+        if job.payment.paymentMethod == PaymentMethod.objects.get(id=1):
+            amount = offer.price
+        else:
+            amount = offer.price * data['hours']
+        offer.status = Offer.OfferStatus.CLOSED
+        offer.save()
+        jobPayment = JobPaymentTransaction.objects.create(offer = offer)
+        jobPayment.save()
+        transaction = Transaction.objects.create(user=request.user, amount=amount, jobPayment=jobPayment)
+        transaction.save()
+        return Response(
+            TransactionSerializer(
+                transaction
+            ).data
+        )
 
 
 

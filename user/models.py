@@ -90,7 +90,7 @@ class CustomUser(AbstractUser):
     objects = CustomUserManager()
 
     def __str__(self) -> str:
-        return self.name
+        return str(self.email)
 
 
 class Degree(models.Model):
