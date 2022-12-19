@@ -93,6 +93,7 @@ class CreateJobSerializer(serializers.Serializer):
 
 class OfferSerializer(serializers.ModelSerializer):
     # user = CustomUserSerializer()
+    job = JobSerializer()
     class Meta:
         model = Offer
         fields = '__all__'
