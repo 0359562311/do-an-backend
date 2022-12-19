@@ -97,6 +97,12 @@ class OfferSerializer(serializers.ModelSerializer):
         model = Offer
         fields = '__all__'
 
+class MyOfferSerializer(serializers.ModelSerializer):
+    job = JobSerializer()
+    class Meta:
+        model = Offer
+        fields = '__all__'
+
 class OfferDetailSerializer(serializers.ModelSerializer):
     user = CustomUserSerializer()
     class Meta:

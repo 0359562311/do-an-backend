@@ -34,6 +34,12 @@ class JobViewSet(viewsets.ModelViewSet):
                 offer.save()
         return Response()
 
+    def retrieve(self, request, pk, *args, **kwargs):
+        job = Job.objects.get(id=pk)
+        return Response(
+            JobSerializer(job).data
+        )
+
     def get_queryset(self):
         currentDate = datetime.datetime.now()
         jobs = Job.objects.exclude(dueDate__isnull=True).filter(status=Job.JobStatus.OPENING, dueDate__gte=currentDate)
@@ -77,12 +83,11 @@ class JobViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['GET'])
     def offered(self, request, pk = None, *args, **kwargs):
-        offers = Offer.objects.filter(user=request.user).select_related('job')
-        jobs = []
-        for i in offers:
-            jobs.append(i.job)
+        offers = Offer.objects.filter(user=request.user)
         return Response(
-            JobSerializer(jobs, many=True).data
+            MyOfferSerializer(
+                offers, many = True
+            ).data
         )
 
     @action(detail=False, methods=['GET'])
@@ -107,9 +112,9 @@ class JobViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['PUT'])
     def accept_offer(self, request, pk, *arg, **kwarg):
         data = request.data
-        offer = Offer.objects.get(data['offerId'])
+        offer = Offer.objects.get(id=data['offerId'])
         offer.status = Offer.OfferStatus.APPROVED
-        offer.save()
+        offer.save()    
         return Response()
 
 class MyJobViewSet(viewsets.ReadOnlyModelViewSet):
