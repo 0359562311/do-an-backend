@@ -23,6 +23,7 @@ class ViewJobSeekersTransaction(models.Model):
     job = models.ForeignKey(to=Job, on_delete=models.CASCADE)
 
 class JobPaymentTransaction(models.Model):
+    receiveAmount = models.IntegerField(default=0)
     offer = models.ForeignKey(to=Offer, on_delete=models.CASCADE)
 
 # Create your models here.

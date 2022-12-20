@@ -78,11 +78,18 @@ class TransactionViewSet(viewsets.ModelViewSet):
             job.save()
         else:
             amount = offer.price * data['hours']
+        if request.user.balance < amount:
+            return Response("Số dư không đủ")
+        request.user.balance -= amount
+        request.user.save()
         offer.status = Offer.OfferStatus.CLOSED
         offer.save()
-        jobPayment = JobPaymentTransaction.objects.create(offer = offer)
+        offer.user.balance += amount * 0.9
+        offer.user.save()
+        jobPayment = JobPaymentTransaction.objects.create(offer = offer, receiveAmount = amount * 0.9)
         jobPayment.save()
         transaction = Transaction.objects.create(user=request.user, amount=amount, jobPayment=jobPayment)
+        transaction.status = Transaction.TransactionStatus.SUCCESS
         transaction.save()
         return Response(
             TransactionSerializer(
