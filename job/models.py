@@ -33,6 +33,8 @@ class Job(Model):
     description = TextField()
     categories = ManyToManyField(to=Category)
     dueDate = DateField(null=True,)
+    createAt = DateTimeField(auto_now_add=True, null=True)
+    updatedAt = DateTimeField(auto_now=True, null=True)
     
     class JobStatus(TextChoices):
         PENDING = "Pending", "Pending"

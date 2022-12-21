@@ -5,6 +5,7 @@ from django.db.models import Q
 from .serializers import *
 from rest_framework import viewsets
 from rest_framework.decorators import action
+from payment.models import JobPaymentTransaction, Transaction
 # Create your views here.
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
@@ -104,7 +105,7 @@ class JobViewSet(viewsets.ModelViewSet):
 
     @action(detail=False,methods=['GET'])
     def my_jobs(self, request):
-        jobs = Job.objects.filter(poster=request.user)
+        jobs = Job.objects.filter(poster=request.user, dueDate__isnull=True).order_by('updateAt')
         return Response(
             JobSerializer(jobs, many=True).data
         )
@@ -116,6 +117,18 @@ class JobViewSet(viewsets.ModelViewSet):
         offer.status = Offer.OfferStatus.APPROVED
         offer.save()    
         return Response()
+
+    @action(detail=True, methods=['POST'])
+    def review(self, request, pk):
+        data = request.data
+        transaction = Transaction.objects.get(id=data.pop('transactionId'))
+        if transaction.status == Transaction.TransactionStatus.SUCCESS and transaction.jobPayment != None:
+            offer = transaction.jobPayment.offer
+            review = Review.objects.create(offer=offer,**data)
+            review.save()
+            return Response(status=200)
+        return Response(status=400)
+
 
 class MyJobViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = JobSerializer
