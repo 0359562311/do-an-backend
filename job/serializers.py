@@ -103,14 +103,16 @@ class OfferSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ReviewSerializer(serializers.ModelSerializer):
-    job = serializers.SerializerMethodField()
+    user = serializers.SerializerMethodField()
     class Meta:
         model = Review
-        fields = ['rating', 'detail']
+        fields = '__all__'
 
-    def get_job(self, obj):
+    def get_user(self, obj):
         offer = Offer.objects.get(id=obj.offer.id)
-        return JobSerializer(offer.job).data
+        return CustomUserSerializer(
+            offer.job.poster
+        ).data
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
