@@ -1,4 +1,7 @@
+from datetime import datetime
 from rest_framework import serializers
+
+from payment.models import ProfilePromotionTransaction, Transaction
 from .models import *
 
 class BankSerializer(serializers.ModelSerializer):
@@ -32,16 +35,22 @@ class CertificateSerializer(serializers.ModelSerializer):
         model = Certificate
         fields = ('_from', 'to', 'description', 'title')
 
+class ProfilePromotionTransactionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProfilePromotionTransaction
+        fields = '__all__'
+
 class CustomUserSerializer(serializers.ModelSerializer):
     bankAccount = BankAccountSerializer()
     degrees = serializers.SerializerMethodField()
     experiences = serializers.SerializerMethodField()
     certificates = serializers.SerializerMethodField()
+    profilePromotion = serializers.SerializerMethodField()
     class Meta:
         model = CustomUser
         fields = (
             'id', 'name', 'dob', 'avatar', 'cover', 
-            'gender', 'phoneNumber', 'createAt', 'updateAt', 'email', 'loyaltyPoint', 'bankAccount', 'degrees', 'experiences', 'certificates', 'bio', 'balance'
+            'gender', 'phoneNumber', 'createAt', 'updateAt', 'email', 'loyaltyPoint', 'bankAccount', 'degrees', 'experiences', 'certificates', 'bio', 'balance', 'profilePromotion'
         )
         read_only_fields = ('id', 'dob', 'gender', 'role', 'createAt', 'updateAt', 'email', 'loyaltyPoint',  'balance')
 
@@ -53,3 +62,9 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
     def get_certificates(self, obj):
         return CertificateSerializer(Certificate.objects.filter(user=obj), many=True).data
+
+    def get_profilePromotion(self, obj):
+        trans = Transaction.objects.filter(profilePromotion__isnull=False, user=obj, profilePromotion__dueDate__gt = datetime.now())
+        if len(trans) > 0:
+            return ProfilePromotionTransactionSerializer(trans.first().profilePromotion).data
+        return None

@@ -51,7 +51,8 @@ class Offer(Model):
     class OfferStatus(TextChoices):
         PENDING = "Pending", "Pending"
         APPROVED = "Approved", "Approved"
-        CLOSED = "Closed", "Closed"
+        CLOSED = "Closed", "Closed",
+        PAYED = "Payed", "Payed",
 
     status = TextField(choices=OfferStatus.choices, default=OfferStatus.PENDING)
 

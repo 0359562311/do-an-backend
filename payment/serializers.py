@@ -16,6 +16,7 @@ class WithdrawTransactionSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class JobPromotionTransactionSerializer(serializers.ModelSerializer):
+    offer = OfferSerializer()
     class Meta:
         model = JobPromotionTransaction
         fields = '__all__'
@@ -40,6 +41,8 @@ class TransactionSerializer(serializers.ModelSerializer):
     deposit = DepositTransactionSerializer()
     withdraw = WithdrawTransactionSerializer()
     jobPayment = JobPaymentTransactionSerializer()
+    profilePromotion = ProfilePromotionTransactionSerializer()
+    jobPromotion = JobPromotionTransactionSerializer()
     class Meta:
         model = Transaction
         fields = '__all__'

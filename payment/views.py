@@ -59,7 +59,25 @@ class TransactionViewSet(viewsets.ModelViewSet):
             currentTime = datetime.datetime.now().timestamp()
             promotion = JobPromotionTransaction.objects.create(dueDate=datetime.datetime.fromtimestamp(currentTime + 60*60*24*days), job=job)
             promotion.save()
-            transaction = Transaction.objects.create(user=request.user, amount=amount, jobPromotion=promotion).save()
+            transaction = Transaction.objects.create(user=request.user, amount=amount, jobPromotion=promotion)
+            transaction.status = Transaction.TransactionStatus.SUCCESS
+            transaction.save()
+            user.balance -= amount
+            user.save()
+            return Response(TransactionSerializer(transaction).data)
+        return Response(status=400)
+
+    @action(methods=['POST'], detail=False)
+    def profilePromotion(self, request):
+        days = request.data['days']
+        amount = 2000 * days
+        user = request.user
+        if user.balance >= amount:
+            currentTime = datetime.datetime.now().timestamp()
+            promotion = ProfilePromotionTransaction.objects.create(dueDate=datetime.datetime.fromtimestamp(currentTime + 60*60*24*days))
+            promotion.save()
+            transaction = Transaction.objects.create(user=request.user, amount=amount, profilePromotion=promotion)
+            transaction.status = Transaction.TransactionStatus.SUCCESS
             transaction.save()
             user.balance -= amount
             user.save()
@@ -82,7 +100,7 @@ class TransactionViewSet(viewsets.ModelViewSet):
             return Response("Số dư không đủ")
         request.user.balance -= amount
         request.user.save()
-        offer.status = Offer.OfferStatus.CLOSED
+        offer.status = Offer.OfferStatus.PAYED
         offer.save()
         offer.user.balance += amount * 0.9
         offer.user.save()
