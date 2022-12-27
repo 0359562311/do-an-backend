@@ -66,5 +66,5 @@ class CustomUserSerializer(serializers.ModelSerializer):
     def get_profilePromotion(self, obj):
         trans = Transaction.objects.filter(profilePromotion__isnull=False, user=obj, profilePromotion__dueDate__gt = datetime.now())
         if len(trans) > 0:
-            return ProfilePromotionTransactionSerializer(trans.first().profilePromotion).data
+            return ProfilePromotionTransactionSerializer(trans.last().profilePromotion).data
         return None

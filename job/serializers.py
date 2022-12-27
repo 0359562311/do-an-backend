@@ -1,5 +1,7 @@
 import datetime
 from rest_framework import serializers
+
+from payment.models import JobPromotionTransaction
 from .models import *
 from user.serializers import CustomUserSerializer
 from datetime import date
@@ -35,12 +37,18 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = '__all__'
 
+class JobPromotionTransactionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = JobPromotionTransaction
+        fields = '__all__'
+
 class JobSerializer(serializers.ModelSerializer):
     payment = JobPaymentSerializer()
     address = AddressSerializer()
     poster = CustomUserSerializer()
     categories = CategorySerializer(many=True)
     images = serializers.SerializerMethodField()
+    promotion = serializers.SerializerMethodField()
     class Meta:
         model = Job
         fields = '__all__'
@@ -51,6 +59,12 @@ class JobSerializer(serializers.ModelSerializer):
         for i in images:
             data.append(i.image)
         return data
+
+    def get_promotion(self, obj):
+        promotion = JobPromotionTransaction.objects.filter(job=obj).last()
+        if promotion == None:
+            return None
+        return JobPromotionTransactionSerializer(promotion).data
 
 class CreateJobSerializer(serializers.Serializer):
     address = serializers.DictField()

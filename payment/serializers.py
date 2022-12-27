@@ -16,7 +16,6 @@ class WithdrawTransactionSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class JobPromotionTransactionSerializer(serializers.ModelSerializer):
-    offer = OfferSerializer()
     class Meta:
         model = JobPromotionTransaction
         fields = '__all__'
