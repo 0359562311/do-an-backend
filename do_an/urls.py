@@ -27,4 +27,5 @@ urlpatterns = [
     path('myJobs/', include('job.urls2')),
     path('payment/', include('payment.urls')),
     path('transaction/', include('payment.urls2')),
+    path('notification/', include('notification.urls')),
 ]

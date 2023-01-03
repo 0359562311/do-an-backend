@@ -2,6 +2,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import permissions
 from django.db.models import Q
+
+from notification.models import Notification
 from .serializers import *
 from rest_framework import viewsets
 from rest_framework.decorators import action
@@ -67,6 +69,7 @@ class JobViewSet(viewsets.ModelViewSet):
             serializer = CreateOfferSerializer(data=data)
             serializer.is_valid(raise_exception=True)
             serializer.save()
+            Notification.objects.create(title="Có chào giá mới", detail="Chào giá mới của công việc " + offer.job.title, user=job.poster).save()
             return Response()
         else:
             offer = Offer.objects.filter(job=job,user=request.user, status=Offer.OfferStatus.PENDING)
@@ -115,7 +118,8 @@ class JobViewSet(viewsets.ModelViewSet):
         data = request.data
         offer = Offer.objects.get(id=data['offerId'])
         offer.status = Offer.OfferStatus.APPROVED
-        offer.save()    
+        offer.save()
+        Notification.objects.create(title="Chào giá được chấp nhận", detail="Hãy sẵn sàng cho công việc " + offer.job.title, user=offer.user).save()
         return Response()
 
     @action(detail=True, methods=['POST'])
@@ -126,6 +130,7 @@ class JobViewSet(viewsets.ModelViewSet):
             offer = transaction.jobPayment.offer
             review = Review.objects.create(offer=offer,**data)
             review.save()
+            Notification.objects.create(title="Đánh giá mới", detail="Bạn có đánh giá mới của công việc " + offer.job.title, user=offer.user).save()
             return Response(status=200)
         return Response(status=400)
 

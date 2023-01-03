@@ -2,6 +2,7 @@ from django.shortcuts import render
 from rest_framework import viewsets, permissions
 from django.db.models import Q
 from job.models import PaymentMethod
+from notification.models import Notification
 from user.models import Bank
 
 from user.serializers import BankSerializer
@@ -109,6 +110,8 @@ class TransactionViewSet(viewsets.ModelViewSet):
         transaction = Transaction.objects.create(user=request.user, amount=amount, jobPayment=jobPayment)
         transaction.status = Transaction.TransactionStatus.SUCCESS
         transaction.save()
+        Notification.objects.create(title="Thanh toán thành công", detail="Thanh toán thành công " + str(transaction.amount) + " VND",user=transaction.user).save()
+        Notification.objects.create(title="Tiền công được trả thành công", detail="Tiền công được trả thành công " + str(transaction.amount) + " VND",user=offer.user).save()
         return Response(
             TransactionSerializer(
                 transaction
@@ -132,19 +135,23 @@ def update_transaction(request):
                 user = CustomUser.objects.get(id=transaction.user.id)
                 user.balance += transaction.amount
                 user.save()
+                Notification.objects.create(title="Nạp tiền thành công", detail="Nạp thành công " + str(transaction.amount) + " VND", user=transaction.user).save()
             else:
                 transaction.status = Transaction.TransactionStatus.FAILED
+                Notification.objects.create(title="Nạp tiền thất bại", detail="Nạp thất bại " + str(transaction.amount) + " VND", user=transaction.user).save()
             transaction.save()
         elif detail.startswith('WD'):
             wd = WithdrawTransaction.objects.filter(detail=detail).first()
             transaction = Transaction.objects.get(withdraw=wd)
             if status == Transaction.TransactionStatus.SUCCESS:
                 transaction.status = status
+                Notification.objects.create(title="Rút tiền thành công", detail="Rút tiền thành công " + str(transaction.amount) + " VND", user=transaction.user).save()
             else:
                 user = CustomUser.objects.get(id=transaction.user.id)
                 user.balance += transaction.amount
                 user.save()
                 transaction.status = Transaction.TransactionStatus.FAILED
+                Notification.objects.create(title="Rút tiền thất bại", detail="Rút tiền thất bại " + str(transaction.amount) + " VND", user=transaction.user).save()
             transaction.save()
         return Response(
             TransactionSerializer(transaction).data
