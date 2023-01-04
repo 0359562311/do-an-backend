@@ -6,4 +6,7 @@ from payment.models import *
 admin.site.register(DepositTransaction)
 admin.site.register(WithdrawTransaction)
 admin.site.register(JobPaymentTransaction)
+admin.site.register(JobPromotionTransaction)
+admin.site.register(ProfilePromotionTransaction)
+admin.site.register(ViewJobSeekersTransaction)
 admin.site.register(Transaction)
