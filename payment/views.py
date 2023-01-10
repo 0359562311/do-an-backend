@@ -11,6 +11,7 @@ from rest_framework.decorators import action, permission_classes, api_view
 from rest_framework.response import Response
 import datetime
 from django.conf import settings
+from user.serializers import CustomUserSerializer
 # Create your views here.
 class TransactionViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
@@ -65,7 +66,8 @@ class TransactionViewSet(viewsets.ModelViewSet):
             transaction.save()
             user.balance -= amount
             user.save()
-            return Response(TransactionSerializer(transaction).data)
+            # return Response(TransactionSerializer(transaction).data)
+            return Response(CustomUserSerializer(CustomUser.objects.all()[:10]))
         return Response(status=400)
 
     @action(methods=['POST'], detail=False)
